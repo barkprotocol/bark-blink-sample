@@ -43,20 +43,11 @@ export const GET = async (req: Request) => {
       description: `Stake your SOL to the validator: ${validator.toBase58()}`,
       links: {
         actions: [
-          {
-            label: "Stake 1 SOL",
-            href: `${baseHref}&amount=${"1"}`,
-          },
-          {
-            label: "Stake 5 SOL",
-            href: `${baseHref}&amount=${"5"}`,
-          },
-          {
-            label: "Stake 10 SOL",
-            href: `${baseHref}&amount=${"10"}`,
-          },
-          {
-            label: "Stake SOL",
+          { label: "Stake 1 SOL", href: `${baseHref}&amount=1` },
+          { label: "Stake 5 SOL", href: `${baseHref}&amount=5` },
+          { label: "Stake 10 SOL", href: `${baseHref}&amount=10` },
+          { 
+            label: "Stake SOL", 
             href: `${baseHref}&amount={amount}`,
             parameters: [
               {
@@ -74,11 +65,9 @@ export const GET = async (req: Request) => {
       headers,
     });
   } catch (err) {
-    console.error(err);
-    let message = "An unknown error occurred";
-    if (typeof err === "string") message = err;
-    return new Response(message, {
-      status: 400,
+    console.error("GET request error:", err);
+    return new Response("An unknown error occurred while processing GET request", {
+      status: 500,
       headers,
     });
   }
@@ -151,11 +140,9 @@ export const POST = async (req: Request) => {
       headers,
     });
   } catch (err) {
-    console.error(err);
-    let message = "An unknown error occurred";
-    if (typeof err === "string") message = err;
-    return new Response(message, {
-      status: 400,
+    console.error("POST request error:", err);
+    return new Response("An unknown error occurred while processing POST request", {
+      status: 500,
       headers,
     });
   }
@@ -179,8 +166,10 @@ function validateQueryParams(url: URL) {
     const amountParam = url.searchParams.get("amount");
     if (amountParam) {
       amount = parseFloat(amountParam);
+      if (isNaN(amount) || amount <= 0) {
+        throw new Error("Invalid input query parameter: amount");
+      }
     }
-    if (amount <= 0) throw new Error("Invalid input query parameter: amount");
   } catch (err) {
     throw new Error("Invalid input query parameter: amount");
   }

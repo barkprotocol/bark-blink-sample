@@ -1,66 +1,96 @@
-import { NextResponse } from "next/server";
-import { Connection, Keypair, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
-import { createMint, mintTo, createAssociatedTokenAccount, getOrCreateAssociatedTokenAccount, Token } from "@solana/spl-token";
+import { NextResponse } from 'next/server';
+import { Connection, Keypair, PublicKey, Transaction, TransactionSignature } from '@solana/web3.js';
+import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getOrCreateAssociatedTokenAccount, createMint, mintTo } from '@solana/spl-token';
 
-// Define the network you are connecting to
-const connection = new Connection("https://api.mainnet-beta.solana.com", "confirmed");
+// Environment variable for Solana network URL
+const SOLANA_NETWORK_URL = process.env.SOLANA_NETWORK_URL || 'https://api.mainnet-beta.solana.com';
+const connection = new Connection(SOLANA_NETWORK_URL, 'confirmed');
 
-// Example minting function
-async function mintNFT() {
-  // Generate a new keypair for the mint account and the payer
+// Function to generate a new wallet (payer)
+const generateWallet = (): Keypair => {
+  return Keypair.generate();
+};
+
+// Function to create a new mint token
+const createNewMint = async (payer: Keypair, decimals: number = 0): Promise<Token> => {
   const mint = Keypair.generate();
-  const payer = Keypair.generate();
-
-  // Define the NFT metadata (for demonstration purposes only)
-  const metadata = {
-    uri: "https://example.com/metadata.json",
-    name: "Example NFT",
-    symbol: "",
-    seller_fee_basis_points: 500, // 5% fee
-    creators: [
-      {
-        address: "YourPublicKeyHere", // Replace with your public key
-        share: 100, // 100% ownership
-      },
-    ],
-  };
-
-  // Create the mint account
-  const mintToken = await Token.createMint(
+  const token = await Token.createMint(
     connection,
-    payer, // Payer keypair
-    payer.publicKey, // Mint authority
+    payer,
+    payer.publicKey,
     null, // Freeze authority (optional)
-    0, // Number of decimal places for the token
-    "Token Program ID" // Replace with the SPL Token Program ID
+    decimals,
+    TOKEN_PROGRAM_ID
   );
+  return token;
+};
 
-  // Create an associated token account for the payer
-  const payerTokenAccount = await mintToken.getOrCreateAssociatedAccountInfo(payer.publicKey);
+// Function to create an associated token account for a wallet
+const createAssociatedTokenAccount = async (
+  payer: Keypair,
+  mint: PublicKey,
+  owner: PublicKey
+) => {
+  const associatedTokenAccount = await getOrCreateAssociatedTokenAccount(
+    connection,
+    payer,
+    mint,
+    owner,
+    TOKEN_PROGRAM_ID,
+    ASSOCIATED_TOKEN_PROGRAM_ID
+  );
+  return associatedTokenAccount;
+};
 
-  // Mint 1 token to the payer's associated token account
+// Function to mint tokens to an associated token account
+const mintTokens = async (
+  payer: Keypair,
+  mint: PublicKey,
+  destination: PublicKey,
+  amount: number
+): Promise<TransactionSignature> => {
+  const token = new Token(connection, mint, TOKEN_PROGRAM_ID, payer);
+  const destinationTokenAccount = await token.getOrCreateAssociatedAccountInfo(destination);
+
   const transaction = new Transaction().add(
-    mintToken.createMintToInstruction(
-      mint.publicKey,
-      payerTokenAccount.address,
+    token.createMintToInstruction(
+      mint,
+      destinationTokenAccount.address,
       payer.publicKey, // Mint authority
-      1e9 // Amount to mint (in base units, e.g., 1 token)
+      amount
     )
   );
 
-  // Sign and send the transaction
-  const signature = await connection.sendTransaction(transaction, [payer], { skipPreflight: false, preflightCommitment: "confirmed" });
+  const signature = await connection.sendTransaction(transaction, [payer], { skipPreflight: false, preflightCommitment: 'confirmed' });
   await connection.confirmTransaction(signature);
+  return signature;
+};
 
-  return { success: true, mintPublicKey: mint.publicKey.toBase58() };
-}
-
-export async function GET(request: Request) {
+// API route handler
+export async function POST(request: Request) {
   try {
-    const result = await mintNFT();
-    return NextResponse.json(result);
+    // Generate payer wallet
+    const payer = generateWallet();
+
+    // Create the mint token
+    const token = await createNewMint(payer);
+
+    // Create an associated token account for the payer
+    const payerTokenAccount = await createAssociatedTokenAccount(payer, token.publicKey, payer.publicKey);
+
+    // Mint 1 token to the payer's associated token account
+    const signature = await mintTokens(payer, token.publicKey, payer.publicKey, 1e9); // 1 token (adjust amount as needed)
+
+    return NextResponse.json({
+      success: true,
+      mintPublicKey: token.publicKey.toBase58(),
+      signature
+    });
   } catch (error) {
-    console.error("Error minting NFT:", error);
-    return NextResponse.json({ success: false, error: error.message });
+    console.error('Error minting NFT:', error);
+    return NextResponse.json({
+      success: false,
+      error: (error as Error).message || 'An error occurred while minting the NFT.'
+    });
   }
 }

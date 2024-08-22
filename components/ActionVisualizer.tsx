@@ -11,29 +11,32 @@ type ActionVisualizerProps = {
 };
 
 export function ActionVisualizer({ url }: ActionVisualizerProps) {
-  const [actionState, setactionState] = useState<Action | null>(null);
+  const [actionState, setActionState] = useState<Action | null>(null);
   const { theme } = useTheme();
-  //Devnet only for now
+
+  // Devnet only for now
   const { adapter } = useActionSolanaWalletAdapter(
     process.env.NEXT_PUBLIC_RPC_URL || "https://api.devnet.solana.com"
   );
-  const { action } = useAction({
-    url,
-    adapter,
-  });
+  const { action } = useAction({ url, adapter });
 
   useEffect(() => {
-    setactionState(action);
+    if (action) {
+      setActionState(action);
+    }
   }, [action]);
-  return actionState ? (
+
+  if (!actionState) {
+    return <div className="text-center text-gray-500">Loading...</div>;
+  }
+
+  return (
     <div className="md:w-1/2 w-full mx-auto">
       <Blink
-        action={actionState as Action}
+        action={actionState}
         websiteText={new URL(url).hostname}
         stylePreset={theme === "dark" ? "x-dark" : "x-light"}
       />
     </div>
-  ) : (
-    <div>{`Loading....`}</div>
   );
 }

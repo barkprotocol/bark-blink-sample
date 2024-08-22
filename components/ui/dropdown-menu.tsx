@@ -1,33 +1,33 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
-import { Check, ChevronRight, Circle } from "lucide-react"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
+import { Check, ChevronRight, Circle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // Root component for Dropdown Menu
-const DropdownMenu = DropdownMenuPrimitive.Root
+const DropdownMenu = DropdownMenuPrimitive.Root;
 
 // Trigger for Dropdown Menu
-const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
+const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
 
 // Grouping items in Dropdown Menu
-const DropdownMenuGroup = DropdownMenuPrimitive.Group
+const DropdownMenuGroup = DropdownMenuPrimitive.Group;
 
 // Portal for Dropdown Menu content
-const DropdownMenuPortal = DropdownMenuPrimitive.Portal
+const DropdownMenuPortal = DropdownMenuPrimitive.Portal;
 
 // Sub-menu functionality
-const DropdownMenuSub = DropdownMenuPrimitive.Sub
+const DropdownMenuSub = DropdownMenuPrimitive.Sub;
 
 // RadioGroup for selecting single options
-const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
+const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
 
 // Sub-trigger for opening nested menus
 const DropdownMenuSubTrigger = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.SubTrigger>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubTrigger> & {
-    inset?: boolean
+    inset?: boolean;
   }
 >(({ className, inset, children, ...props }, ref) => (
   <DropdownMenuPrimitive.SubTrigger
@@ -42,8 +42,8 @@ const DropdownMenuSubTrigger = React.forwardRef<
     {children}
     <ChevronRight className="ml-auto h-4 w-4" />
   </DropdownMenuPrimitive.SubTrigger>
-))
-DropdownMenuSubTrigger.displayName = DropdownMenuPrimitive.SubTrigger.displayName
+));
+DropdownMenuSubTrigger.displayName = DropdownMenuPrimitive.SubTrigger.displayName;
 
 // Sub-content for nested Dropdown Menus
 const DropdownMenuSubContent = React.forwardRef<
@@ -58,8 +58,8 @@ const DropdownMenuSubContent = React.forwardRef<
     )}
     {...props}
   />
-))
-DropdownMenuSubContent.displayName = DropdownMenuPrimitive.SubContent.displayName
+));
+DropdownMenuSubContent.displayName = DropdownMenuPrimitive.SubContent.displayName;
 
 // Main content for Dropdown Menu
 const DropdownMenuContent = React.forwardRef<
@@ -77,14 +77,14 @@ const DropdownMenuContent = React.forwardRef<
       {...props}
     />
   </DropdownMenuPrimitive.Portal>
-))
-DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName
+));
+DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName;
 
 // Dropdown menu item with optional inset for sub-menus
 const DropdownMenuItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
-    inset?: boolean
+    inset?: boolean;
   }
 >(({ className, inset, ...props }, ref) => (
   <DropdownMenuPrimitive.Item
@@ -96,8 +96,8 @@ const DropdownMenuItem = React.forwardRef<
     )}
     {...props}
   />
-))
-DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName
+));
+DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
 
 // Checkbox item for Dropdown Menu with indicator
 const DropdownMenuCheckboxItem = React.forwardRef<
@@ -120,8 +120,8 @@ const DropdownMenuCheckboxItem = React.forwardRef<
     </span>
     {children}
   </DropdownMenuPrimitive.CheckboxItem>
-))
-DropdownMenuCheckboxItem.displayName = DropdownMenuPrimitive.CheckboxItem.displayName
+));
+DropdownMenuCheckboxItem.displayName = DropdownMenuPrimitive.CheckboxItem.displayName;
 
 // Radio item for Dropdown Menu with indicator
 const DropdownMenuRadioItem = React.forwardRef<
@@ -143,14 +143,14 @@ const DropdownMenuRadioItem = React.forwardRef<
     </span>
     {children}
   </DropdownMenuPrimitive.RadioItem>
-))
-DropdownMenuRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName
+));
+DropdownMenuRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName;
 
 // Label for Dropdown Menu items
 const DropdownMenuLabel = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Label>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label> & {
-    inset?: boolean
+    inset?: boolean;
   }
 >(({ className, inset, ...props }, ref) => (
   <DropdownMenuPrimitive.Label
@@ -162,8 +162,8 @@ const DropdownMenuLabel = React.forwardRef<
     )}
     {...props}
   />
-))
-DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName
+));
+DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName;
 
 // Separator for Dropdown Menu
 const DropdownMenuSeparator = React.forwardRef<
@@ -175,8 +175,8 @@ const DropdownMenuSeparator = React.forwardRef<
     className={cn("-mx-1 my-1 h-px bg-muted", className)}
     {...props}
   />
-))
-DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName
+));
+DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName;
 
 // Shortcut text for Dropdown Menu items
 const DropdownMenuShortcut = ({
@@ -188,9 +188,9 @@ const DropdownMenuShortcut = ({
       className={cn("ml-auto text-xs tracking-widest opacity-60", className)}
       {...props}
     />
-  )
-}
-DropdownMenuShortcut.displayName = "DropdownMenuShortcut"
+  );
+};
+DropdownMenuShortcut.displayName = "DropdownMenuShortcut";
 
 // Export all Dropdown Menu components
 export {
@@ -209,4 +209,4 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
-}
+};

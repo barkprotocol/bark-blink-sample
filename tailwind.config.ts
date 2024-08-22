@@ -1,20 +1,20 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: ["class"],
+  darkMode: ["class"], // Enable dark mode with the 'class' strategy
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    './pages/**/*.{ts,tsx}',  // Paths to your page files
+    './components/**/*.{ts,tsx}', // Paths to your component files
+    './app/**/*.{ts,tsx}',    // Paths to your app files
+    './src/**/*.{ts,tsx}',    // Paths to your src files
   ],
-  prefix: "",
+  prefix: "", // Optional: Prefix for all Tailwind utility classes
   theme: {
     container: {
-      center: true,
-      padding: "2rem",
+      center: true, // Center the container
+      padding: "2rem", // Default padding
       screens: {
-        "2xl": "1400px",
+        "2xl": "1400px", // Custom screen size for 2xl breakpoint
       },
     },
     extend: {
@@ -52,12 +52,12 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        sand: '#D0BFB4',
+        sand: '#D0BFB4', // Custom sand color
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        lg: "var(--radius)", // Large border radius
+        md: "calc(var(--radius) - 2px)", // Medium border radius
+        sm: "calc(var(--radius) - 4px)", // Small border radius
       },
       keyframes: {
         "accordion-down": {
@@ -74,12 +74,14 @@ const config: Config = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       fontFamily: {
-        sans: ['Poppins', 'sans-serif'],
-        display: ['Syne', 'sans-serif'],
+        sans: ['Poppins', 'sans-serif'], // Default sans-serif font
+        display: ['Syne', 'sans-serif'], // Display font
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"), // Plugin for animations
+  ],
 };
 
 export default config;

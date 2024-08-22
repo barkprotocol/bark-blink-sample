@@ -15,8 +15,10 @@ import {
   Transaction,
 } from "@solana/web3.js";
 
+// Define headers for the response
 const headers = createActionHeaders();
 
+// Handle GET requests
 export const GET = async (req: Request) => {
   try {
     const requestUrl = new URL(req.url);
@@ -30,7 +32,7 @@ export const GET = async (req: Request) => {
     const payload: ActionGetResponse = {
       title: "Actions Example - Transfer Native SOL",
       icon: new URL("/send-image.png", requestUrl.origin).toString(),
-      description: `Transfer SOL to ${DEFAULT_SOL_ADDRESS}`,
+      description: `Transfer SOL to ${DEFAULT_SOL_ADDRESS.toBase58()}`,
       label: "Transfer",
       links: {
         actions: [
@@ -61,13 +63,10 @@ export const GET = async (req: Request) => {
       },
     };
 
-    return Response.json(payload, {
-      headers,
-    });
+    return new Response(JSON.stringify(payload), { headers });
   } catch (err) {
-    console.log(err);
-    let message = "An unknown error occurred";
-    if (typeof err == "string") message = err;
+    console.error(err);
+    const message = typeof err === "string" ? err : "An unknown error occurred";
     return new Response(message, {
       status: 400,
       headers,
@@ -75,10 +74,12 @@ export const GET = async (req: Request) => {
   }
 };
 
+// Handle OPTIONS requests
 export const OPTIONS = async (req: Request) => {
   return new Response(null, { headers });
 };
 
+// Handle POST requests
 export const POST = async (req: Request) => {
   try {
     const requestUrl = new URL(req.url);
@@ -98,11 +99,9 @@ export const POST = async (req: Request) => {
 
     const connection = new Connection(clusterApiUrl("devnet"));
 
-    const minimumBalance = await connection.getMinimumBalanceForRentExemption(
-      0
-    );
+    const minimumBalance = await connection.getMinimumBalanceForRentExemption(0);
     if (amount * LAMPORTS_PER_SOL < minimumBalance) {
-      throw `account may not be rent exempt: ${toPubkey.toBase58()}`;
+      throw new Error(`Account may not be rent exempt: ${toPubkey.toBase58()}`);
     }
 
     const transferSolInstruction = SystemProgram.transfer({
@@ -111,8 +110,7 @@ export const POST = async (req: Request) => {
       lamports: amount * LAMPORTS_PER_SOL,
     });
 
-    const { blockhash, lastValidBlockHeight } =
-      await connection.getLatestBlockhash();
+    const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
 
     const transaction = new Transaction({
       feePayer: account,
@@ -127,13 +125,10 @@ export const POST = async (req: Request) => {
       },
     });
 
-    return Response.json(payload, {
-      headers,
-    });
+    return new Response(JSON.stringify(payload), { headers });
   } catch (err) {
-    console.log(err);
-    let message = "An unknown error occurred";
-    if (typeof err == "string") message = err;
+    console.error(err);
+    const message = typeof err === "string" ? err : "An unknown error occurred";
     return new Response(message, {
       status: 400,
       headers,
@@ -141,25 +136,26 @@ export const POST = async (req: Request) => {
   }
 };
 
+// Validate and extract query parameters
 function validatedQueryParams(requestUrl: URL) {
   let toPubkey: PublicKey = DEFAULT_SOL_ADDRESS;
   let amount: number = DEFAULT_SOL_AMOUNT;
 
   try {
-    if (requestUrl.searchParams.get("to")) {
+    if (requestUrl.searchParams.has("to")) {
       toPubkey = new PublicKey(requestUrl.searchParams.get("to")!);
     }
-  } catch (err) {
+  } catch {
     throw "Invalid input query parameter: to";
   }
 
   try {
-    if (requestUrl.searchParams.get("amount")) {
+    if (requestUrl.searchParams.has("amount")) {
       amount = parseFloat(requestUrl.searchParams.get("amount")!);
     }
 
-    if (amount <= 0) throw "amount is too small";
-  } catch (err) {
+    if (isNaN(amount) || amount <= 0) throw "Amount is invalid";
+  } catch {
     throw "Invalid input query parameter: amount";
   }
 

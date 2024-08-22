@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @layer base {
+  /* Root variables for light and dark themes */
   :root {
     --background: hsl(0, 0%, 100%);
     --foreground: hsl(222, 84%, 5%);
@@ -59,28 +60,70 @@
     --chart-5: hsl(340, 75%, 55%);
     --sand: #D0BFB4;
   }
-}
 
-@layer base {
-  * {
-    @apply border-border;
+  /* Base button styles */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md transition-colors duration-300;
+    cursor: pointer;
+    border: 1px solid transparent;
   }
 
-  body {
-    @apply bg-background text-foreground font-sans;
+  /* Light theme button styles */
+  .btn-light {
+    @apply bg-primary text-primary-foreground border border-primary;
   }
 
-  a {
-    @apply text-primary no-underline;
+  .btn-light:hover {
+    @apply bg-primary-dark border-primary-dark;
   }
 
-  .container {
-    @apply mx-auto px-4 sm:px-6 lg:px-8;
+  .btn-light:focus {
+    @apply ring-2 ring-primary ring-offset-2;
   }
 
+  .btn-light:disabled {
+    @apply bg-muted text-muted-foreground border-muted cursor-not-allowed;
+  }
+
+  /* Dark theme button styles */
+  .btn-dark {
+    @apply bg-primary-foreground text-primary border border-primary-foreground;
+  }
+
+  .btn-dark:hover {
+    @apply bg-primary-dark border-primary-dark;
+  }
+
+  .btn-dark:focus {
+    @apply ring-2 ring-primary ring-offset-2;
+  }
+
+  .btn-dark:disabled {
+    @apply bg-muted text-muted-foreground border-muted cursor-not-allowed;
+  }
+
+  /* Destructive button styles */
+  .btn-destructive {
+    @apply bg-destructive text-destructive-foreground border border-destructive;
+  }
+
+  .btn-destructive:hover {
+    @apply bg-destructive-dark border-destructive-dark;
+  }
+
+  .btn-destructive:focus {
+    @apply ring-2 ring-destructive ring-offset-2;
+  }
+
+  .btn-destructive:disabled {
+    @apply bg-muted text-muted-foreground border-muted cursor-not-allowed;
+  }
+
+  /* Card component styling */
   .card {
     @apply bg-card text-card-foreground border border-border rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl flex flex-col;
     min-height: 300px; /* Ensures all cards have the same height */
+    background-color: rgba(255, 255, 255, 0.95); /* More transparency */
   }
 
   .card-header {
@@ -104,7 +147,7 @@
   }
 
   .logo {
-    @apply h-10 w-auto;
+    @apply h-12 w-auto; /* Adjust logo size */
   }
 
   .responsive-img {

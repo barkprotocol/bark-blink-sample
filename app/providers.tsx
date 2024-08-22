@@ -14,36 +14,41 @@ import {
 import { clusterApiUrl } from "@solana/web3.js";
 import { ThemeProvider } from "@/components/theme-provider";
 import Link from "next/link";
-import { siteConfig } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/mode-toggle";
 import "@solana/wallet-adapter-react-ui/styles.css";
 
-// The logo images
-import LogoLight from "@/public/logo-light.png";
-import LogoDark from "@/public/logo-dark.png";
+// Import logos for light and dark themes
+import LogoLight from "@/public/logo.light.png";
+import LogoDark from "@/public/logo.dark.png";
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {
   const [mounted, setMounted] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
     setMounted(true);
+
+    // Set up theme detection and listener
+    const darkThemeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    // Initial theme setup
+    setTheme(darkThemeMediaQuery.matches ? 'dark' : 'light');
+    
+    // Listen for changes in color scheme
+    const handleThemeChange = (e: MediaQueryListEvent) => {
+      setTheme(e.matches ? 'dark' : 'light');
+    };
+    darkThemeMediaQuery.addEventListener('change', handleThemeChange);
+
+    // Clean up listener on component unmount
+    return () => darkThemeMediaQuery.removeEventListener('change', handleThemeChange);
   }, []);
 
   const network = WalletAdapterNetwork.Devnet;
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const wallets = useMemo(() => [new UnsafeBurnerWalletAdapter()], [network]);
-
-  // Function to determine the correct logo based on the current theme
-  const getLogo = () => {
-    if (document.documentElement.classList.contains("dark")) {
-      return LogoDark.src;
-    } else {
-      return LogoLight.src;
-    }
-  };
 
   if (!mounted) {
     return null;
@@ -55,21 +60,20 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
         <WalletModalProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="flex min-h-screen flex-col">
-              <header className="flex justify-between items-center my-5 container z-40 bg-background">
+              <header className="fixed top-0 left-0 right-0 z-40 flex justify-between items-center p-4 bg-white bg-opacity-60 dark:bg-gray-800 dark:border-gray-700 shadow-lg border-b border-gray-200 backdrop-blur-lg">
                 <Link href="/" className="flex items-center space-x-2">
-                  <img src={getLogo()} alt="BARK Blink Logo" className="h-10" />
+                  <img
+                    src={theme === 'dark' ? LogoDark.src : LogoLight.src}
+                    alt="BARK Blink Logo"
+                    className="h-10"
+                  />
                 </Link>
-                <div className="flex justify-center items-center gap-2">
+                <div className="flex items-center gap-2">
                   <WalletMultiButton />
                   <ModeToggle />
                 </div>
               </header>
-              <div
-                className={cn(
-                  "before:absolute z-[-1] before:h-[300px] before:w-full before:translate-x-1/4 before:translate-y-52 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-50 after:h-[180px] after:w-full after:translate-x-5 after:bg-gradient-conic after:from-sky-200 after:via-black-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]"
-                )}
-              ></div>
-              <main className={"flex-1 space-y-10 max-w-screen-xl mx-auto"}>
+              <main className="flex-1 space-y-10 max-w-screen-xl mx-auto pt-16">
                 {children}
               </main>
             </div>

@@ -2,15 +2,14 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-// Define styles for different alert variants
+// Define styles for different alert variants using class-variance-authority (CVA)
 const alertVariants = cva(
   "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
   {
     variants: {
       variant: {
         default: "bg-background text-foreground",
-        destructive:
-          "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
+        destructive: "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
       },
     },
     defaultVariants: {
@@ -23,7 +22,7 @@ const alertVariants = cva(
 const Alert = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>
->(({ className, variant, ...props }, ref) => (
+>(({ className, variant = "default", ...props }, ref) => (
   <div
     ref={ref}
     role="alert"
@@ -59,5 +58,5 @@ const AlertDescription = React.forwardRef<
 ));
 AlertDescription.displayName = "AlertDescription";
 
-// Export components
+// Export components for use in other parts of the application
 export { Alert, AlertTitle, AlertDescription };
