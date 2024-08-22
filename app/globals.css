@@ -79,49 +79,34 @@
   }
 
   .card {
-    @apply bg-card text-card-foreground border border-border rounded-lg shadow-md p-4;
+    @apply bg-card text-card-foreground border border-border rounded-lg shadow-lg transition-transform transform hover:scale-105 hover:shadow-xl flex flex-col;
+    min-height: 300px; /* Ensures all cards have the same height */
   }
 
-  .button {
-    @apply px-4 py-2 rounded-lg font-semibold transition-colors;
-  }
-
-  .button-primary {
-    @apply bg-primary text-primary-foreground hover:bg-primary-foreground hover:text-primary;
-  }
-
-  .button-secondary {
-    @apply bg-secondary text-secondary-foreground hover:bg-secondary-foreground hover:text-secondary;
-  }
-}
-
-@layer components {
   .card-header {
-    @apply border-b border-border p-4;
+    @apply border-b border-border p-4 mb-2;
   }
 
   .card-content {
-    @apply p-4;
+    @apply p-4 flex-1; /* Ensures content area expands to fill available space */
   }
 
   .card-title {
-    @apply text-xl font-bold;
+    @apply text-lg font-semibold mb-2;
+  }
+
+  .card-icon {
+    @apply w-8 h-8 text-primary mr-3;
+  }
+
+  .card-description {
+    @apply text-muted-foreground;
   }
 
   .logo {
-    @apply h-8 w-auto;
+    @apply h-10 w-auto;
   }
 
-  .new-color-bg {
-    @apply bg-new-color;
-  }
-
-  .new-color-text {
-    @apply text-new-color;
-  }
-}
-
-@layer utilities {
   .responsive-img {
     @apply max-w-full h-auto;
   }
