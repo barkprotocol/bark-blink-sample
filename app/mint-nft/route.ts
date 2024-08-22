@@ -79,7 +79,8 @@ export async function POST(request: Request) {
     const payerTokenAccount = await createAssociatedTokenAccount(payer, token.publicKey, payer.publicKey);
 
     // Mint 1 token to the payer's associated token account
-    const signature = await mintTokens(payer, token.publicKey, payer.publicKey, 1e9); // 1 token (adjust amount as needed)
+    const amount = 1e9; // 1 token with 9 decimal places
+    const signature = await mintTokens(payer, token.publicKey, payer.publicKey, amount);
 
     return NextResponse.json({
       success: true,
@@ -87,10 +88,10 @@ export async function POST(request: Request) {
       signature
     });
   } catch (error) {
-    console.error('Error minting NFT:', error);
+    console.error('Error minting token:', error);
     return NextResponse.json({
       success: false,
-      error: (error as Error).message || 'An error occurred while minting the NFT.'
+      error: (error as Error).message || 'An error occurred while minting the token.'
     });
   }
 }

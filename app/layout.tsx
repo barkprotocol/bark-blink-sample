@@ -1,4 +1,4 @@
-import { Metadata, Viewport } from 'next';
+import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import Link from 'next/link';
@@ -9,12 +9,6 @@ import { Providers } from './providers';
 import Head from 'next/head';
 
 const inter = Inter({ subsets: ['latin'] });
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-};
 
 export const metadata: Metadata = {
   title: 'BARK Blink',
@@ -33,7 +27,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta charSet="UTF-8" />
         <meta name="description" content={metadata.description} />
         <meta name="keywords" content={metadata.keywords} />

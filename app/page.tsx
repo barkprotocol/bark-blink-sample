@@ -1,32 +1,38 @@
 import Link from 'next/link';
-import Image from 'next/image'; // Import Next.js Image component
+import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShieldIcon, WalletIcon, ImageIcon } from 'lucide-react';
 import Logo from '@/public/bark-mascot.png';
 
-// Define the action cards data
-const actionCards = [
+// Define the action cards data with TypeScript type
+interface ActionCard {
+  title: string;
+  href: string;
+  description: string;
+  icon: JSX.Element;
+}
+
+const actionCards: ActionCard[] = [
   {
     title: 'Staking BARK',
     href: '/stake',
     description: 'Help secure the network by staking BARK to a validator.',
-    icon: <ShieldIcon className="w-12 h-12" />,
+    icon: <ShieldIcon className="w-12 h-12" aria-label="Shield icon" />,
   },
   {
     title: 'Transfer BARK',
     href: '/transfer',
     description: 'Easily transfer BARK to any other Solana wallet.',
-    icon: <WalletIcon className="w-12 h-12" />,
+    icon: <WalletIcon className="w-12 h-12" aria-label="Wallet icon" />,
   },
   {
     title: 'Mint an NFT',
     href: '/mint-nft',
     description: 'Allow anyone to claim a digital collectible from a collection.',
-    icon: <ImageIcon className="w-12 h-12" />,
+    icon: <ImageIcon className="w-12 h-12" aria-label="Image icon" />,
   },
 ];
 
-// Define the Page component
 export default function Page() {
   return (
     <section id="features" className="relative container space-y-12 py-8 md:py-12 lg:py-24">
@@ -35,12 +41,10 @@ export default function Page() {
         <Image
           src={Logo}
           alt="Background BARK Mascot"
-          layout="fill" // Use layout fill to cover the container
-          objectFit="cover" // Ensure the image covers the container
+          layout="fill"
+          objectFit="cover"
           className="opacity-20 mix-blend-multiply"
-          priority // Optional: Use this if the image is critical for the page
-          quality={90} // Improve image quality if necessary
-          loading="eager" // Use eager loading for critical images
+          quality={90}
         />
       </div>
 
@@ -49,11 +53,11 @@ export default function Page() {
         <Image
           src={Logo}
           alt="BARK Mascot"
-          width={150} // Adjust width for better responsiveness
-          height={150} // Adjust height for better responsiveness
+          width={150}
+          height={150}
           className="mx-auto"
-          quality={90} // Improve image quality if necessary
-          loading="lazy" // Use lazy loading for non-critical images
+          quality={90}
+          loading="lazy"
         />
       </div>
 
