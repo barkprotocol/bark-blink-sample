@@ -48,7 +48,8 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
   const network = WalletAdapterNetwork.Devnet;
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
-  const wallets = useMemo(() => [new UnsafeBurnerWalletAdapter()], [network]);
+  // Ideally, use a more secure wallet adapter in production
+  const wallets = useMemo(() => [new UnsafeBurnerWalletAdapter()], []);
 
   if (!mounted) {
     return null;
