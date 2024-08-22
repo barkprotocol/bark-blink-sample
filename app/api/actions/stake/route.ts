@@ -22,38 +22,19 @@ import {
 
 const headers = createActionHeaders();
 
-//Steps to create an action/blink
-
-//1. GET Request
-//   - create a base url for the icon and it can be used anywhere
-//   - get the request paramaters and validate them
-//   - create the payload
-//   - return the payload
-
-//2. POST Request
-//   - create a base url for the icon and it can be used anywhere
-//   - get the request paramaters and validate them
-//   - get the body as ActionPostRequest type
-//   - validate the input
-//   - create a connection with the RPC
-//   - do some other checks which requires the RPC connection
-//   - create a keypair
-//   - create a transaction with programs
-//   - set the transaction.feepayer as the account
-//   - set the transaction.recentBlockhash
-//   - create a payload with the transaction with type ActionPostResponse
-//   - return the payload with headers
-
+// Handle OPTIONS requests
 export const OPTIONS = async () => {
   return new Response(null, { headers });
 };
 
+// Handle GET requests
 export const GET = async (req: Request) => {
   const { validator, amount } = validateQueryParams(new URL(req.url));
   const baseHref = new URL(
     `/api/actions/stake?validator=${validator.toBase58()}`,
     new URL(req.url).origin
   ).toString();
+  
   try {
     const payload: ActionGetResponse = {
       title: "Stake SOL",
@@ -76,7 +57,7 @@ export const GET = async (req: Request) => {
           },
           {
             label: "Stake SOL",
-            href: `${baseHref}&amount=${amount}`,
+            href: `${baseHref}&amount={amount}`,
             parameters: [
               {
                 name: "amount",
@@ -89,13 +70,13 @@ export const GET = async (req: Request) => {
       },
     };
 
-    return Response.json(payload, {
+    return new Response(JSON.stringify(payload), {
       headers,
     });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     let message = "An unknown error occurred";
-    if (typeof err == "string") message = err;
+    if (typeof err === "string") message = err;
     return new Response(message, {
       status: 400,
       headers,
@@ -103,12 +84,13 @@ export const GET = async (req: Request) => {
   }
 };
 
+// Handle POST requests
 export const POST = async (req: Request) => {
   try {
     const { validator, amount } = validateQueryParams(new URL(req.url));
     const body: ActionPostRequest = await req.json();
 
-    //validate the input
+    // Validate the account provided in the body
     let account: PublicKey;
     try {
       account = new PublicKey(body.account);
@@ -121,29 +103,28 @@ export const POST = async (req: Request) => {
 
     const connection = new Connection(clusterApiUrl("devnet"));
 
-    // other checks - here it is the minimum stake amount
+    // Check if the amount is valid and meets the minimum stake requirement
     const minStake = await connection.getStakeMinimumDelegation();
-    if (amount < minStake.value) {
-      return new Response(`Stake amount must be greater than ${minStake}`, {
+    if (amount < minStake.value / LAMPORTS_PER_SOL) {
+      return new Response(`Stake amount must be greater than ${minStake.value / LAMPORTS_PER_SOL} SOL`, {
         status: 400,
         headers,
       });
     }
 
+    // Generate a new keypair for the stake account
     const stakeKeyPair = Keypair.generate();
 
-    //create a transaction
+    // Create a transaction for staking SOL
     const transaction = new Transaction().add(
-      //add programs as required
-
-      //program to create a stake account
+      // Instruction to create a new stake account
       StakeProgram.createAccount({
         stakePubkey: stakeKeyPair.publicKey,
         authorized: new Authorized(account, account),
         fromPubkey: account,
-        lamports: 1 * LAMPORTS_PER_SOL,
+        lamports: 1 * LAMPORTS_PER_SOL, // The minimum balance for a stake account
       }),
-      //program to delegate to the validator
+      // Instruction to delegate the stake to the specified validator
       StakeProgram.delegate({
         authorizedPubkey: account,
         stakePubkey: stakeKeyPair.publicKey,
@@ -151,25 +132,28 @@ export const POST = async (req: Request) => {
       })
     );
 
+    // Set transaction details
     transaction.feePayer = account;
     transaction.recentBlockhash = (
       await connection.getLatestBlockhash()
     ).blockhash;
 
+    // Create the action post response
     const payload: ActionPostResponse = await createPostResponse({
       fields: {
         transaction,
-        message: "Stake SOL",
+        message: `Stake ${amount} SOL to validator ${validator.toBase58()}`,
       },
       signers: [stakeKeyPair],
     });
 
-    return Response.json(payload, {
+    return new Response(JSON.stringify(payload), {
       headers,
     });
   } catch (err) {
+    console.error(err);
     let message = "An unknown error occurred";
-    if (typeof err == "string") message = err;
+    if (typeof err === "string") message = err;
     return new Response(message, {
       status: 400,
       headers,
@@ -177,25 +161,28 @@ export const POST = async (req: Request) => {
   }
 };
 
+// Function to validate query parameters
 function validateQueryParams(url: URL) {
   let validator = DEFAULT_VALIDATOR_VOTE_PUBKEY;
   let amount = DEFAULT_STAKE_AMOUNT;
 
   try {
-    if (url.searchParams.get("validator")) {
-      validator = new PublicKey(url.searchParams.get("validator")!);
+    const validatorParam = url.searchParams.get("validator");
+    if (validatorParam) {
+      validator = new PublicKey(validatorParam);
     }
   } catch (err) {
-    throw "Invalid input query parameter: validator";
+    throw new Error("Invalid input query parameter: validator");
   }
 
   try {
-    if (url.searchParams.get("amount")) {
-      amount = parseFloat(url.searchParams.get("amount")!);
+    const amountParam = url.searchParams.get("amount");
+    if (amountParam) {
+      amount = parseFloat(amountParam);
     }
-    if (amount <= 0) throw "Invalid input query parameter: amount";
+    if (amount <= 0) throw new Error("Invalid input query parameter: amount");
   } catch (err) {
-    throw "Invalid input query parameter: amount";
+    throw new Error("Invalid input query parameter: amount");
   }
 
   return { amount, validator };

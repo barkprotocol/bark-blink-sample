@@ -19,8 +19,11 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Solana Actions and Blinks ",
-  description: "",
+  title: "BARK Blinks",
+  description: "An application for managing BARK tokens and Solana actions.",
+  keywords: "BARK, Solana, cryptocurrency, tokens, staking, NFT, blockchain",
+  author: "BARK Protocol",
+  ogImage: siteConfig.ogImage,
 };
 
 export default function RootLayout({
