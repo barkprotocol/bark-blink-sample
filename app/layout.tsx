@@ -8,6 +8,7 @@ import { siteConfig } from '@/lib/constants';
 import { Providers } from './providers';
 import Head from 'next/head';
 
+// Load Inter font
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {

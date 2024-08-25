@@ -27,7 +27,7 @@ const actionCards: ActionCard[] = [
   },
   {
     title: 'Mint an NFT',
-    href: '/mint-nft',
+    href: '/mint',
     description: 'Allow anyone to claim a digital collectible from a collection.',
     icon: <ImageIcon className="w-12 h-12" aria-label="Image icon" />,
   },
@@ -41,10 +41,11 @@ export default function Page() {
         <Image
           src={Logo}
           alt="Background BARK Mascot"
-          layout="fill"
-          objectFit="cover"
+          fill
+          style={{ objectFit: 'cover' }}
           className="opacity-20 mix-blend-multiply"
           quality={90}
+          loading="lazy"
         />
       </div>
 
@@ -62,9 +63,9 @@ export default function Page() {
       </div>
 
       <div className="mx-auto grid gap-4 sm:grid-cols-2 md:grid-cols-3 max-w-4xl relative z-10">
-        {actionCards.map((item, index) => (
-          <Link key={index} href={item.href} passHref>
-            <Card className="group transition-transform transform hover:scale-105 hover:border-primary cursor-pointer">
+        {actionCards.map((item) => (
+          <Link key={item.title} href={item.href} passHref>
+            <Card className="transition-transform transform hover:scale-105 hover:border-primary cursor-pointer group">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-3">
                   {item.icon}

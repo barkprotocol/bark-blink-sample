@@ -15,30 +15,31 @@ export function SolanaQRCode({
   url,
   className,
   background = "transparent",
-  color = "#000000", // Default color to black
+  color = "#080808",
   size = 400,
 }: ComponentProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Ensure URL is correctly handled
-    const resolvedUrl = new URL(url, window.location.href);
+    try {
+      // Ensure URL is correctly handled
+      const resolvedUrl = typeof url === "string" ? new URL(url, window.location.href) : url;
 
-    // Encode the URL for Solana QR
-    const encodedUrl = encodeURL(
-      { link: resolvedUrl },
-      "solana:"
-    );
+      // Encode the URL for Solana QR
+      const encodedUrl = encodeURL({ link: resolvedUrl }, "solana:");
 
-    console.log("Encoded URL:", encodedUrl.toString());
+      console.log("Encoded URL:", encodedUrl.toString());
 
-    // Create the Solana QR code
-    const qr = createSolanaQR(encodedUrl, size, background, color);
+      // Create the Solana QR code
+      const qr = createSolanaQR(encodedUrl, size, background, color);
 
-    // Append QR code to the ref element
-    if (ref.current) {
-      ref.current.innerHTML = ""; // Clear previous QR code if any
-      qr.append(ref.current);
+      // Append QR code to the ref element
+      if (ref.current) {
+        ref.current.innerHTML = ""; // Clear previous QR code if any
+        qr.append(ref.current);
+      }
+    } catch (error) {
+      console.error("Error creating Solana QR code:", error);
     }
 
     // Cleanup: clear QR code when component unmounts
@@ -49,5 +50,5 @@ export function SolanaQRCode({
     };
   }, [url, background, color, size]); // Dependencies for useEffect
 
-  return <div ref={ref} className={className} />;
+  return <div ref={ref} className={className} role="img" aria-label="Solana QR Code" />;
 }

@@ -81,6 +81,7 @@ const config: Config = {
   },
   plugins: [
     require("tailwindcss-animate"), // Plugin for animations
+    // Add other plugins if needed
   ],
 };
 

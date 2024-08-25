@@ -12,6 +12,7 @@ type ActionVisualizerProps = {
 
 export function ActionVisualizer({ url }: ActionVisualizerProps) {
   const [actionState, setActionState] = useState<Action | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const { theme } = useTheme();
 
   // Devnet only for now
@@ -25,6 +26,20 @@ export function ActionVisualizer({ url }: ActionVisualizerProps) {
       setActionState(action);
     }
   }, [action]);
+
+  useEffect(() => {
+    // Basic URL validation
+    try {
+      new URL(url);
+      setError(null);
+    } catch {
+      setError('Invalid URL');
+    }
+  }, [url]);
+
+  if (error) {
+    return <div className="text-center text-red-500">{error}</div>;
+  }
 
   if (!actionState) {
     return <div className="text-center text-gray-500">Loading...</div>;

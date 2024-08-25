@@ -11,16 +11,12 @@ const Footer: React.FC = () => {
             &copy; {new Date().getFullYear()} BARK Protocol. All rights reserved.
           </p>
           <nav className="flex space-x-4">
-            <Link href="/privacy-policy">
-              <a className="text-sm hover:text-primary" aria-label="Privacy Policy">
-                Privacy Policy
-              </a>
+            <Link href="/privacy-policy" aria-label="Privacy Policy">
+              Privacy Policy
             </Link>
             <span>|</span>
-            <Link href="/terms-of-service">
-              <a className="text-sm hover:text-primary" aria-label="Terms of Service">
-                Terms of Service
-              </a>
+            <Link href="/terms-of-service" aria-label="Terms of Service">
+              Terms of Service
             </Link>
           </nav>
         </div>

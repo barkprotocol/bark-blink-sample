@@ -22,7 +22,11 @@ const MintNFTPage = () => {
 
     try {
       const result = await mintNFT(data.metadataUri, data.name, data.symbol);
-      setMintResult(result.mintPublicKey); // Assuming the result contains a mintPublicKey
+      if (result.success) {
+        setMintResult(result.mintPublicKey); // Assuming the result contains a mintPublicKey
+      } else {
+        throw new Error(result.error || 'Unknown error occurred');
+      }
     } catch (err) {
       setError((err as Error).message || 'An error occurred while minting the NFT.');
       console.error('Minting Error:', err); // Log error for debugging
@@ -41,7 +45,7 @@ const MintNFTPage = () => {
             id="metadataUri"
             type="text"
             {...register('metadataUri', { required: 'Metadata URI is required' })}
-            className="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm text-white focus:ring-primary focus:border-primary"
+            className="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm text-white focus:ring-primary focus:border-primary sm:text-sm"
             aria-invalid={!!errors.metadataUri}
             aria-describedby="metadataUri-error"
           />
@@ -55,7 +59,7 @@ const MintNFTPage = () => {
             id="name"
             type="text"
             {...register('name', { required: 'Name is required' })}
-            className="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm text-white focus:ring-primary focus:border-primary"
+            className="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm text-white focus:ring-primary focus:border-primary sm:text-sm"
             aria-invalid={!!errors.name}
             aria-describedby="name-error"
           />
@@ -69,7 +73,7 @@ const MintNFTPage = () => {
             id="symbol"
             type="text"
             {...register('symbol', { required: 'Symbol is required' })}
-            className="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm text-white focus:ring-primary focus:border-primary"
+            className="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm text-white focus:ring-primary focus:border-primary sm:text-sm"
             aria-invalid={!!errors.symbol}
             aria-describedby="symbol-error"
           />
@@ -105,6 +109,7 @@ const MintNFTPage = () => {
               target="_blank" 
               rel="noopener noreferrer" 
               className="text-primary hover:underline"
+              aria-label={`View mint public key ${mintResult} on Solscan`}
             >
               {mintResult}
             </a>

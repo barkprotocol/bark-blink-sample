@@ -5,17 +5,17 @@ import { cn } from "@/lib/utils";
 
 // Define button variants with `class-variance-authority`
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary-dark dark:text-primary-light dark:hover:bg-primary",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 dark:bg-destructive-dark dark:text-destructive-light dark:hover:bg-destructive",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 dark:bg-secondary-dark dark:text-secondary-light dark:hover:bg-secondary",
-        ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-gray-700",
-        link: "text-primary underline-offset-4 hover:underline dark:text-primary-light dark:hover:text-primary",
-        dark: "bg-gray-800 text-white hover:bg-gray-700 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600",
+        default: "bg-primary text-primary-foreground border border-primary",
+        destructive: "bg-destructive text-destructive-foreground border border-destructive",
+        outline: "border border-input bg-background text-text",
+        secondary: "bg-secondary text-secondary-foreground border border-secondary",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+        dark: "bg-gray-800 text-white border border-gray-700",
       },
       size: {
         default: "h-10 px-4 py-2",
